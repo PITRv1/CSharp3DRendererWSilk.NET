@@ -84,7 +84,7 @@ namespace Take4_at_rendering
         }
 
         private static unsafe void OnUpdate(double deltaTime) {
-            var moveSpeed = 2.5f * (float)deltaTime;
+            var moveSpeed = 5.0f * (float)deltaTime;
 
             if (primaryKeyboard.IsKeyPressed(Key.W)) {
                 //Move forwards
@@ -103,6 +103,7 @@ namespace Take4_at_rendering
                 CameraPosition += Vector3.Normalize(Vector3.Cross(CameraFront, CameraUp)) * moveSpeed;
             }
 
+            GeometryInstances[GeometryInstances.Count - 1].Transform.Rotation = Quaternion.CreateFromAxisAngle(Vector3.UnitY, MathHelper.DegreesToRadians((float)window.Time * 45f));
 
             Console.WriteLine(1.0 / deltaTime);
         }
