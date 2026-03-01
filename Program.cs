@@ -12,7 +12,7 @@ namespace Take4_at_rendering
 {
     class Program
     {
-        public static bool isCameraPerspective = false;
+        public static bool isCameraPerspective = true;
         public static float orthoScaler = 0.05f;
 
 
@@ -68,7 +68,7 @@ namespace Take4_at_rendering
 
             Gl = GL.GetApi(window);
 
-            Shader = new Shader(Gl, "shader.vert", "shader.frag");
+            Shader = new Shader(Gl, "shaders/shader.vert", "shaders/shader.frag");
             GenerateGeometry();
 
             Skybox = new Skybox(Gl, new[] {
@@ -127,6 +127,8 @@ namespace Take4_at_rendering
                     Shader.SetUniform("uModel", instance.Transform.ViewMatrix);
                     Shader.SetUniform("uView", view);
                     Shader.SetUniform("uProjection", projection);
+                    Shader.SetUniform("uLightDir", new Vector3(1.0f, -1.0f, 0.5f)); 
+                    Shader.SetUniform("uAmbient", 0.15f);
 
                     Gl.DrawElements(PrimitiveType.Triangles, (uint)mesh.Indices.Length, DrawElementsType.UnsignedInt, null);
                 }
@@ -186,18 +188,18 @@ namespace Take4_at_rendering
             for (int i = 0; i < 50; i++) {
                 var t1 = new Transform { Position = new Vector3(i, 0, 0)};
                 GeometryInstances.Add(new ModelInstance(
-                new Model(Gl, "cube.model"),
+                new Model(Gl, "models/cube.model"),
                 t1,
-                new Texture(Gl, "testTex.png")
+                new Texture(Gl, "textures/testTex.png")
                 ));
                 
             }
 
             var t2 = new Transform { };
             GeometryInstances.Add(new ModelInstance(
-                new Model(Gl, "groundPlane.obj"),
+                new Model(Gl, "models/groundPlane.obj"),
                 t2,
-                new Texture(Gl, "testTex.png")
+                new Texture(Gl, "textures/testTex.png")
                 ));
         }
     }

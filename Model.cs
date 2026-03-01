@@ -158,6 +158,9 @@ namespace Take4_at_rendering
                 vertices.Add(vertex.Position.X);
                 vertices.Add(vertex.Position.Y);
                 vertices.Add(vertex.Position.Z);
+                vertices.Add(vertex.Normal.X);
+                vertices.Add(vertex.Normal.Y);
+                vertices.Add(vertex.Normal.Z);
                 vertices.Add(vertex.TexCoords.X);
                 vertices.Add(vertex.TexCoords.Y);
             }

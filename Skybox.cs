@@ -27,7 +27,7 @@ namespace Take4_at_rendering
             _vao = new VertexArrayObject<float, uint>(gl, _vbo, null);
             _vao.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, 3, 0);
             _texture = new CubemapTexture(gl, facePaths);
-            _shader = new Shader(gl, "skybox.vert", "skybox.frag");
+            _shader = new Shader(gl, "shaders/skybox.vert", "shaders/skybox.frag");
         }
 
         public void Render(Matrix4x4 view, Matrix4x4 projection, Vector2D<int> framebufferSize) {
