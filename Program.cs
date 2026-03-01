@@ -12,32 +12,17 @@ namespace Take4_at_rendering
 {
     class Program
     {
+        public static bool isCameraPerspective = false;
+        public static float orthoScaler = 0.05f;
+
+
         private static IWindow window;
-        private static GL Gl;
         private static IKeyboard primaryKeyboard;
 
-        private static Texture Texture;
+        private static GL Gl;
         private static Shader Shader;
-        private static List<ModelInstance> ModelList = new();
-
-
-        //Skybox
+        private static List<ModelInstance> GeometryInstances = new();
         private static Skybox Skybox;
-
-        private static BufferObject<float> SkyboxVBO;
-        private static VertexArrayObject<float, uint> SkyboxVAO;
-        private static CubemapTexture SkyboxTexture;
-        private static Shader SkyboxShader;
-
-        private static readonly float[] SkyboxVertices = {
-            -1f,  1f, -1f,  -1f, -1f, -1f,   1f, -1f, -1f,   1f, -1f, -1f,   1f,  1f, -1f,  -1f,  1f, -1f,
-            -1f, -1f,  1f,  -1f, -1f, -1f,  -1f,  1f, -1f,  -1f,  1f, -1f,  -1f,  1f,  1f,  -1f, -1f,  1f,
-             1f, -1f, -1f,   1f, -1f,  1f,   1f,  1f,  1f,   1f,  1f,  1f,   1f,  1f, -1f,   1f, -1f, -1f,
-            -1f, -1f,  1f,  -1f,  1f,  1f,   1f,  1f,  1f,   1f,  1f,  1f,   1f, -1f,  1f,  -1f, -1f,  1f,
-            -1f,  1f, -1f,   1f,  1f, -1f,   1f,  1f,  1f,   1f,  1f,  1f,  -1f,  1f,  1f,  -1f,  1f, -1f,
-            -1f, -1f, -1f,  -1f, -1f,  1f,   1f, -1f, -1f,   1f, -1f, -1f,  -1f, -1f,  1f,   1f, -1f,  1f
-        };
-
 
         //Setup the camera's location, directions, and movement speed
         private static Vector3 CameraPosition = new Vector3(0.0f, 0.0f, 3.0f);
@@ -54,9 +39,7 @@ namespace Take4_at_rendering
         private static void Main(string[] args) {
             var options = WindowOptions.Default;
             options.Size = new Vector2D<int>(1920, 1080);
-            options.Title = "LearnOpenGL with Silk.NET";
-            options.UpdatesPerSecond = 120;
-            options.FramesPerSecond = 120;
+            options.Title = "Cardinal renderer";
 
 
             window = Window.Create(options);
@@ -81,7 +64,6 @@ namespace Take4_at_rendering
             for (int i = 0; i < input.Mice.Count; i++) {
                 input.Mice[i].Cursor.CursorMode = CursorMode.Raw;
                 input.Mice[i].MouseMove += OnMouseMove;
-                input.Mice[i].Scroll += OnMouseWheel;
             }
 
             Gl = GL.GetApi(window);
@@ -125,15 +107,18 @@ namespace Take4_at_rendering
             Gl.Enable(EnableCap.CullFace);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            var difference = (float)(window.Time * 100);
             var size = window.FramebufferSize;
-
             var view = Matrix4x4.CreateLookAt(CameraPosition, CameraPosition + CameraFront, CameraUp);
             
-            //var projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraZoom), (float)size.X / size.Y, 0.1f, 100.0f);
-            var projection = Matrix4x4.CreateOrthographic((float)size.X, size.Y, 0.1f, 100.0f);
+            var projection = Matrix4x4.Identity;
+            if (isCameraPerspective) {
+                projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraZoom), (float)size.X / size.Y, 0.1f, 100.0f);
 
-            foreach (var instance in ModelList) { 
+            } else {
+                projection = Matrix4x4.CreateOrthographic(size.X * orthoScaler, size.Y * orthoScaler, 0.1f, 100.0f);
+            }
+
+            foreach (var instance in GeometryInstances) { 
                 foreach (var mesh in instance.Model.Meshes) {
                     mesh.Bind();
                     Shader.Use();
@@ -177,7 +162,7 @@ namespace Take4_at_rendering
         }
 
         private static void OnClose() {
-            foreach (var model3d in ModelList) {
+            foreach (var model3d in GeometryInstances) {
                 model3d.Model.Dispose();
                 model3d.Texture.Dispose();
 
@@ -200,7 +185,7 @@ namespace Take4_at_rendering
 
             for (int i = 0; i < 50; i++) {
                 var t1 = new Transform { Position = new Vector3(i, 0, 0)};
-                ModelList.Add(new ModelInstance(
+                GeometryInstances.Add(new ModelInstance(
                 new Model(Gl, "cube.model"),
                 t1,
                 new Texture(Gl, "testTex.png")
@@ -209,7 +194,7 @@ namespace Take4_at_rendering
             }
 
             var t2 = new Transform { };
-            ModelList.Add(new ModelInstance(
+            GeometryInstances.Add(new ModelInstance(
                 new Model(Gl, "groundPlane.obj"),
                 t2,
                 new Texture(Gl, "testTex.png")
