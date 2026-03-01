@@ -193,14 +193,6 @@ namespace Take4_at_rendering
 
 
         private static void CreateModelInstances() {
-
-            var t1 = new Transform { Position = new Vector3(2, 1, 0)};
-            GeometryInstances.Add(new ModelInstance(
-            new Model(Gl, "models/cube.model"),
-            t1,
-            new Texture(Gl, "textures/testTex.png")
-            ));
-
             var t2 = new Transform { };
             GeometryInstances.Add(new ModelInstance(
                 new Model(Gl, "models/groundPlane.obj"),
@@ -213,6 +205,19 @@ namespace Take4_at_rendering
                 new Model(Gl, "models/cineball.obj"),
                 t3,
                 new Texture(Gl, "textures/absolute.png")
+                ));
+
+            var t1 = new Transform { Position = new Vector3(0, 0, -2f) };
+            GeometryInstances.Add(new ModelInstance(
+                new Model(Gl, "models/cineball.obj"),
+                t1,
+                new Texture(Gl, "textures/testTex.png")
+                ));
+            var t4 = new Transform { Position = new Vector3(0, 0, 2f) };
+            GeometryInstances.Add(new ModelInstance(
+                new Model(Gl, "models/cineball.obj"),
+                t4,
+                new Texture(Gl, "textures/silk.png")
                 ));
         }
     }
