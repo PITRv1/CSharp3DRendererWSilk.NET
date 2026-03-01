@@ -21,6 +21,7 @@ namespace Take4_at_rendering
 
         private static GL Gl;
         private static Shader Shader;
+        private static PostProcessor PostProcessor;
         private static List<ModelInstance> GeometryInstances = new();
         private static Skybox Skybox;
 
@@ -68,8 +69,12 @@ namespace Take4_at_rendering
 
             Gl = GL.GetApi(window);
 
+            var size = window.FramebufferSize;
+            PostProcessor = new PostProcessor(Gl, (uint)size.X, (uint)size.Y);
+            //PostProcessor.AddEffect(new Shader(Gl, "shaders/post.vert", "shaders/greyscale.frag"));
+
             Shader = new Shader(Gl, "shaders/shader.vert", "shaders/shader.frag");
-            GenerateGeometry();
+            CreateModelInstances();
 
             Skybox = new Skybox(Gl, new[] {
                 "skybox/right.png", "skybox/left.png",
@@ -118,6 +123,8 @@ namespace Take4_at_rendering
                 projection = Matrix4x4.CreateOrthographic(size.X * orthoScaler, size.Y * orthoScaler, 0.1f, 100.0f);
             }
 
+            PostProcessor.BeginCapture();
+
             foreach (var instance in GeometryInstances) { 
                 foreach (var mesh in instance.Model.Meshes) {
                     mesh.Bind();
@@ -127,7 +134,7 @@ namespace Take4_at_rendering
                     Shader.SetUniform("uModel", instance.Transform.ViewMatrix);
                     Shader.SetUniform("uView", view);
                     Shader.SetUniform("uProjection", projection);
-                    Shader.SetUniform("uLightDir", new Vector3(1.0f, -1.0f, 0.5f)); 
+                    Shader.SetUniform("uLightDir", new Vector3(-1.0f, -1.0f, -0.5f)); 
                     Shader.SetUniform("uAmbient", 0.15f);
 
                     Gl.DrawElements(PrimitiveType.Triangles, (uint)mesh.Indices.Length, DrawElementsType.UnsignedInt, null);
@@ -135,6 +142,8 @@ namespace Take4_at_rendering
             }
 
             Skybox.Render(view, projection, window.FramebufferSize);
+
+            PostProcessor.EndCaptureAndRender();
         }
 
         private static void OnFramebufferResize(Vector2D<int> newSize) {
@@ -171,7 +180,7 @@ namespace Take4_at_rendering
             }
 
             Shader.Dispose();
-
+            PostProcessor.Dispose();
             Skybox.Dispose();
         }
 
@@ -183,23 +192,27 @@ namespace Take4_at_rendering
 
 
 
-        private static void GenerateGeometry() {
+        private static void CreateModelInstances() {
 
-            for (int i = 0; i < 50; i++) {
-                var t1 = new Transform { Position = new Vector3(i, 0, 0)};
-                GeometryInstances.Add(new ModelInstance(
-                new Model(Gl, "models/cube.model"),
-                t1,
-                new Texture(Gl, "textures/testTex.png")
-                ));
-                
-            }
+            var t1 = new Transform { Position = new Vector3(2, 1, 0)};
+            GeometryInstances.Add(new ModelInstance(
+            new Model(Gl, "models/cube.model"),
+            t1,
+            new Texture(Gl, "textures/testTex.png")
+            ));
 
             var t2 = new Transform { };
             GeometryInstances.Add(new ModelInstance(
                 new Model(Gl, "models/groundPlane.obj"),
                 t2,
                 new Texture(Gl, "textures/testTex.png")
+                ));
+
+            var t3 = new Transform { };
+            GeometryInstances.Add(new ModelInstance(
+                new Model(Gl, "models/cineball.obj"),
+                t3,
+                new Texture(Gl, "textures/absolute.png")
                 ));
         }
     }

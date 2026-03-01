@@ -2,6 +2,7 @@
 using Silk.NET.OpenGL;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 using System;
 
 namespace Take4_at_rendering
@@ -22,6 +23,7 @@ namespace Take4_at_rendering
             Bind();
 
             using (var img = Image.Load<Rgba32>(path)) {
+                img.Mutate(x => x.Flip(FlipMode.Vertical));
                 gl.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba8, (uint)img.Width, (uint)img.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, null);
 
                 img.ProcessPixelRows(accessor => {

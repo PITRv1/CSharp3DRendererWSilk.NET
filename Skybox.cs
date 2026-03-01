@@ -43,9 +43,9 @@ namespace Take4_at_rendering
                 0, 0, 0, 1);
 
             var skyboxProjection = Matrix4x4.CreatePerspectiveFieldOfView(
-                MathHelper.DegreesToRadians(90f),
+                MathHelper.DegreesToRadians(45f),
                 (float)framebufferSize.X / framebufferSize.Y,
-                0.1f, 10.0f);
+                0.1f, 100.0f);
 
             _shader.SetUniform("uView", skyboxView);
             _shader.SetUniform("uProjection", skyboxProjection);
