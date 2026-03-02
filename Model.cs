@@ -10,6 +10,8 @@ using System.Numerics;
 using PETRenderer;
 using AssimpMesh = Silk.NET.Assimp.Mesh;
 using AssimpScene = Silk.NET.Assimp.Scene;
+using AssimpNode = Silk.NET.Assimp.Node;
+
 
 
 namespace PETRenderer
@@ -42,7 +44,7 @@ namespace PETRenderer
             ProcessNode(scene->MRootNode, scene);
         }
 
-        private unsafe void ProcessNode(Node* node, AssimpScene* scene) {
+        private unsafe void ProcessNode(AssimpNode* node, AssimpScene* scene) {
             for (var i = 0; i < node->MNumMeshes; i++) {
                 var mesh = scene->MMeshes[node->MMeshes[i]];
                 Meshes.Add(ProcessMesh(mesh, scene));

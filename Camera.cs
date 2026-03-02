@@ -19,7 +19,7 @@ namespace PETRenderer
         public float LookSensitivity = 0.1f;
 
         public bool IsPerspective = true;
-        public bool IsDebug = true;
+        public bool IsDebug = false;
         public float OrthoScaler = 0.05f;
 
         private Vector2 _lastMousePosition;

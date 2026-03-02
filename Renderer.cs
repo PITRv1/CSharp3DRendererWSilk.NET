@@ -7,6 +7,9 @@ namespace PETRenderer
 {
     public class Renderer : IDisposable
     {
+        public event Action<Renderer, PostProcessor, Vector2D<int>> OnLoadEffects;
+
+
         public GL Gl { get; private set; }
 
         private Shader _shader;
@@ -18,12 +21,7 @@ namespace PETRenderer
             var size = window.FramebufferSize;
             _postProcessor = new PostProcessor(Gl, (uint)size.X, (uint)size.Y);
 
-            // Add effects here
-            var pixelateShader = new Shader(Gl, "shaders/post.vert", "shaders/pixelate.frag");
-            pixelateShader.Use();
-            pixelateShader.SetUniform("uResolution", new Vector2(size.X, size.Y));
-            pixelateShader.SetUniform("uPixelSize", 4f);
-            _postProcessor.AddEffect(pixelateShader);
+            OnLoadEffects?.Invoke(this, _postProcessor, size);
 
             _shader = new Shader(Gl, "shaders/shader.vert", "shaders/shader.frag");
         }
