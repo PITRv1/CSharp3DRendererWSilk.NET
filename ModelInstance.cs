@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Take4_at_rendering
+namespace PETRenderer
 {
     public class ModelInstance {
         public Model Model { get; set; }

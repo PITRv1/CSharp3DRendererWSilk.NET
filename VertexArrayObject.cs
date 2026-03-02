@@ -1,8 +1,8 @@
 ﻿using Silk.NET.OpenGL;
 using System;
-using Take4_at_rendering;
+using PETRenderer;
 
-namespace Take4_at_rendering
+namespace PETRenderer
 {
     public class VertexArrayObject<TVertexType, TIndexType> : IDisposable
         where TVertexType : unmanaged

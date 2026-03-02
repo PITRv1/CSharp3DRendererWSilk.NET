@@ -5,7 +5,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System;
 
-namespace Take4_at_rendering
+namespace PETRenderer
 {
     public class Texture : IDisposable
     {

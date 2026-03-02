@@ -4,9 +4,9 @@
 using Silk.NET.OpenGL;
 using System;
 using System.Collections.Generic;
-using Take4_at_rendering;
+using PETRenderer;
 
-namespace Take4_at_rendering
+namespace PETRenderer
 {
     public class Mesh : IDisposable
     {

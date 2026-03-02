@@ -2,7 +2,7 @@
 using Silk.NET.OpenGL;
 using System.Numerics;
 
-namespace Take4_at_rendering
+namespace PETRenderer
 {
     public class Skybox : IDisposable
     {

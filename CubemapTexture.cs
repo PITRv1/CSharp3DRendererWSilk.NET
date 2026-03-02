@@ -2,7 +2,7 @@
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Take4_at_rendering
+namespace PETRenderer
 {
     public class CubemapTexture : IDisposable
     {

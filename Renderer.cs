@@ -1,0 +1,55 @@
+﻿using Silk.NET.Maths;
+using Silk.NET.OpenGL;
+using Silk.NET.Windowing;
+using System.Numerics;
+
+namespace PETRenderer
+{
+    public class Renderer : IDisposable
+    {
+        public GL Gl { get; private set; }
+
+        private Shader _shader;
+        private PostProcessor _postProcessor;
+
+        public void Initialize(IWindow window) {
+            Gl = GL.GetApi(window);
+
+            var size = window.FramebufferSize;
+            _postProcessor = new PostProcessor(Gl, (uint)size.X, (uint)size.Y);
+
+            // Add effects here
+            var pixelateShader = new Shader(Gl, "shaders/post.vert", "shaders/pixelate.frag");
+            pixelateShader.Use();
+            pixelateShader.SetUniform("uResolution", new Vector2(size.X, size.Y));
+            pixelateShader.SetUniform("uPixelSize", 4f);
+            _postProcessor.AddEffect(pixelateShader);
+
+            _shader = new Shader(Gl, "shaders/shader.vert", "shaders/shader.frag");
+        }
+
+        public void Render(Scene scene, Camera camera, Vector2D<int> framebufferSize) {
+            Gl.Enable(EnableCap.DepthTest);
+            Gl.Enable(EnableCap.CullFace);
+            Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+            var view = camera.GetViewMatrix();
+            var projection = camera.GetProjectionMatrix(framebufferSize);
+
+            _postProcessor.BeginCapture();
+
+            scene.Render(_shader, view, projection, framebufferSize);
+
+            _postProcessor.EndCaptureAndRender();
+        }
+
+        public void Resize(Vector2D<int> newSize) {
+            Gl.Viewport(newSize);
+        }
+
+        public void Dispose() {
+            _shader.Dispose();
+            _postProcessor.Dispose();
+        }
+    }
+}

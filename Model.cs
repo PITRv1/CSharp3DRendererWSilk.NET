@@ -7,10 +7,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Take4_at_rendering;
+using PETRenderer;
 using AssimpMesh = Silk.NET.Assimp.Mesh;
+using AssimpScene = Silk.NET.Assimp.Scene;
 
-namespace Take4_at_rendering
+
+namespace PETRenderer
 {
     public class Model : IDisposable
     {
@@ -40,7 +42,7 @@ namespace Take4_at_rendering
             ProcessNode(scene->MRootNode, scene);
         }
 
-        private unsafe void ProcessNode(Node* node, Scene* scene) {
+        private unsafe void ProcessNode(Node* node, AssimpScene* scene) {
             for (var i = 0; i < node->MNumMeshes; i++) {
                 var mesh = scene->MMeshes[node->MMeshes[i]];
                 Meshes.Add(ProcessMesh(mesh, scene));
@@ -52,7 +54,7 @@ namespace Take4_at_rendering
             }
         }
 
-        private unsafe Mesh ProcessMesh(AssimpMesh* mesh, Scene* scene) {
+        private unsafe Mesh ProcessMesh(AssimpMesh* mesh, AssimpScene* scene) {
             // data to fill
             List<Vertex> vertices = new List<Vertex>();
             List<uint> indices = new List<uint>();
